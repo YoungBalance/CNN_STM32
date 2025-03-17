@@ -30,7 +30,8 @@ DEF_TITLE_STRING = 'IMU\n'
 DEF_BAUD_RATE = 921600
 
 # Defines a list of action names from which users can select actions to record
-motion_name = ['0','1','2','3','4','5','6','7','8','9','a','b','c']
+motion_name = ['up','down','left','right','front','back']
+maxmotionlen = 6
 # Obtain a list of all available serial ports in the current system
 port_list = list(serial.tools.list_ports.comports())
 
@@ -117,13 +118,13 @@ def Motion_Assign():
     # 提示用户从列表中选择一个动作
     print('\nChoose one from the fllowing name')
     # 遍历动作名称列表并打印索引和动作名称
-    for i in range(0,13,1):
+    for i in range(0,maxmotionlen,1):
         print(i+1,motion_name[i])
     # 检查用户输入的索引是否在有效范围内
-    while user_input > 13 or user_input < 1:
+    while user_input > maxmotionlen or user_input < 1:
         # 提示用户输入要录制的动作索引
         user_input = int(input("Assign a motion you want to decord (1-13)"))
-        if user_input > 13 or user_input < 1:
+        if user_input > maxmotionlen or user_input < 1:
             print("Invalid Input.Check and try again")
         else:
                 # 返回用户选择的动作索引减 1

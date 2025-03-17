@@ -11,19 +11,12 @@ int8_t model_output = -1;
 
 typedef enum eModel_Output{
 	Unrecognized = -1,
-	RightAngle = 0,
-	SharpAngle = 1,
-	Lightning = 2,
-	Triangle = 3,
-	Letter_h = 4,
-	letter_R = 5,
-	letter_W = 6,
-	letter_phi = 7,
-	Circle = 8,
-	UpAndDown = 9,
-	Horn = 10,
-	Wave = 11,
-	NoMotion = 12
+	up = 0,
+	down = 1,
+	left = 2,
+	right = 3,
+	front = 4,
+	back = 5
 }eModel_Output;
 
 #ifdef NNOM_USING_STATIC_MEMORY
@@ -59,7 +52,7 @@ int8_t model_get_output(void)
 	int8_t max_output = -128;
 	int8_t ret = 0;
 	//Iterate through 13 classification results to find the maximum accuracy
-	for(i = 0; i < 13;i++){
+	for(i = 0; i < 6;i++){
 		printf("Output[%d] = %.2f %%\r\n",i,(nnom_output_data[i] / 127.0)*100);
 		if(nnom_output_data[i] >= max_output){
 			max_output = nnom_output_data[i] ;
@@ -78,44 +71,23 @@ int8_t model_get_output(void)
 		case Unrecognized:
 			printf("Unrecognized");
 			break;
-		case RightAngle:
-			printf("RightAngle");
+		case up:
+			printf("up");
 			break;
-		case SharpAngle:
-			printf("SharpAngle");
+		case down:
+			printf("down");
 			break;
-		case Lightning:
-			printf("Lightning");
+		case left:
+			printf("left");
 			break;
-		case Triangle:
-			printf("Triangle");
+		case right:
+			printf("right");
 			break;
-		case Letter_h:
-			printf("Letter_h");
+		case front:
+			printf("front");
 			break;
-		case letter_R:
-			printf("Letter_R");
-			break;
-		case letter_W:
-			printf("Letter_W");
-			break;
-		case letter_phi:
-			printf("Letter_phi");
-			break;
-		case Circle:
-			printf("Circle");
-			break;
-		case UpAndDown:
-			printf("UpAndDown");
-			break;
-		case Horn:
-			printf("Horn");
-			break;
-		case Wave:
-			printf("Wave");
-			break;
-		case NoMotion:
-			printf("Unrecognized");
+		case back:
+			printf("back");
 			break;
 	}
 	printf("\n");

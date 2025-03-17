@@ -1,9 +1,9 @@
 import os
-# 导入os模块，用于与操作系统进行交互，例如文件和目录操作。
+# Import the os module to interact with the operating system, such as file and directory operations
 import numpy as np # type: ignore
-# 导入numpy库，用于处理数值计算和数组操作，# type: ignore用于忽略类型检查警告。
+# Import the numpy library to handle numeric calculations and array manipulation
 import tensorflow as tf # type: ignore
-# 导入tensorflow库，一个强大的深度学习框架，同样忽略类型检查警告。
+# Import the tensorflow library, a powerful deep learning framework
 from tensorflow.keras.models import load_model, save_model # type: ignore
 # 从tensorflow.keras.models模块中导入load_model和save_model函数，分别用于加载和保存模型。
 from tensorflow.keras.preprocessing.sequence import pad_sequences # type: ignore
@@ -18,11 +18,11 @@ import re
 # 导入re模块，用于正则表达式操作，方便对文件名进行匹配和解析。
 
 # 动作分类名
-motion_names = ['0','1','2','3','4','5','6','7','8','9','a','b','c']
+motion_names = ['up','down','left','right','front','back']
 # 定义一个列表，包含所有可能的动作分类名称。
 
 # 定义目录路径
-DEF_SAVE_TO_PATH = './TraningData_3_11/'
+DEF_SAVE_TO_PATH = './TraningData_3_17/'
 # 定义训练数据所在的目录路径。
 DEF_MODEL_NAME = 'model.h5'
 # 定义保存模型的文件名，使用.h5格式，这是Keras模型常用的保存格式。
@@ -44,7 +44,8 @@ DEF_BATCH_SIZE = 10
 # 定义训练模型时的批次大小。
 DEF_NUM_EPOCH = 300
 # 定义训练模型的迭代次数。
-
+mGyro = (3,4,5)
+mAcc = (0,1,2)
 # 动作名称到标签的映射
 motion_to_label = {name: idx for idx, name in enumerate(motion_names)}
 # 使用字典推导式创建一个字典，将动作名称映射到对应的整数标签。
@@ -54,26 +55,26 @@ def train(x_train, y_train, x_test, y_test, input_shape=(DEF_N_ROWS, 3), num_cla
     inputs = layers.Input(shape=input_shape) # type: ignore
     # 定义模型的输入层，指定输入形状。
     # 卷积层
-    x = layers.Conv1D(30, kernel_size=3, strides=3)(inputs) # type: ignore
+    x = layers.Conv1D(15, kernel_size=3, strides=3)(inputs) # type: ignore
     # 添加一个一维卷积层，包含30个滤波器，卷积核大小为3，步长为3。
     x = layers.ReLU()(x) # type: ignore
     # 添加ReLU激活函数层，对卷积层的输出进行非线性变换。
-    x = layers.Conv1D(30, kernel_size=3, strides=3)(x) # type: ignore
+    x = layers.Conv1D(15, kernel_size=3, strides=3)(x) # type: ignore
     # 再添加一个一维卷积层，包含15个滤波器，卷积核大小为3，步长为3。
     x = layers.ReLU()(x)# type: ignore
     # 再次添加ReLU激活函数层。
 
-   # x = layers.MaxPooling1D(pool_size=2, strides=1)(x)# type: ignore
+    #x = layers.MaxPooling1D(pool_size=3, strides=1)(x)# type: ignore
     # 添加一个一维最大池化层，池化窗口大小为3，步长为3。
     # 展平层
     x = layers.Flatten()(x)# type: ignore
     # 添加一个展平层，将多维的输入数据展平为一维向量。
-   # x = layers.Dropout(0.5)(x)# type: ignore
+    x = layers.Dropout(0.2)(x)# type: ignore
     # 注释掉的代码，原本用于添加Dropout层，防止过拟合。
     # 全连接层1
     x = layers.Dense(num_classes)(x)# type: ignore
     # 添加一个全连接层，神经元数量等于类别数量。
-    x = layers.Dropout(0.5)(x)# type: ignore
+    x = layers.Dropout(0.2)(x)# type: ignore
     # 添加Dropout层，以0.5的概率随机丢弃神经元，防止过拟合。
     outputs = layers.Softmax()(x)# type: ignore
     # 添加Softmax激活函数层，将输出转换为概率分布。
@@ -146,7 +147,7 @@ def load_dataset(root_dir, max_rows=None):
                         file_path = os.path.join(root_dir, filename)
                         # 构建文件的完整路径。
                         # 使用max_rows参数限制读取的行数
-                        data = np.loadtxt(file_path, delimiter=' ', usecols=(0, 1, 2), max_rows=max_rows)
+                        data = np.loadtxt(file_path, delimiter=' ', usecols=mGyro, max_rows=max_rows)
                         # 使用numpy的loadtxt函数加载文件数据，指定分隔符、使用的列和最大行数。
                         file_list.append(data)
                         # 将加载的数据添加到文件列表中。
